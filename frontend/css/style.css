@@ -31,3 +31,6 @@ nav.navbar {
 .navbar-nav {
   gap: 24px;
 }
+a:hover{
+  text-decoration: underline;
+}

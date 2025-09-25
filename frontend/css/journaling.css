@@ -1,3 +1,10 @@
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    transition: 500ms;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background-color: #e6f0f7;
@@ -25,4 +32,40 @@ body {
     width: 100%;
     object-fit: cover;
     border-radius: 8px;
+}
+
+#backHome {
+    background: none !important;
+    border: 1px solid #fff;
+    color: #333;
+}
+
+#backHome:hover {
+    transform: scale(1.05);
+    background: #f0f0f0;
+    border-color: #f0f0f0;
+    color: #222;
+    transition: 500ms;
+}
+
+#backHome {
+    background: none !important;
+    border: 1px solid #fff;
+    color: #333;
+}
+
+#backHome:hover {
+    background: #f0f0f0;
+    border-color: #f0f0f0;
+    color: #222;
+}
+
+#previewCard,
+#uploadForm {
+    transition: transform 0.3s;
+}
+
+#previewCard:hover,
+#uploadForm:hover {
+    transform: scale(1.03);
 }

@@ -6,8 +6,8 @@ console.log("Welcome to Monsoon Days Platform!");
 //   alert("Let's start your journaling journey!");
 // });
 
-  document.getElementById('loginBtn').addEventListener('click', function(e) {
-    e.preventDefault();
+document.getElementById('loginBtn').addEventListener('click', function (e) {
+  e.preventDefault();
   // Save main page HTML for restoration
   const mainPage = document.body.innerHTML;
   document.body.innerHTML = `
@@ -40,16 +40,16 @@ console.log("Welcome to Monsoon Days Platform!");
         }
         </style>
         `;
-        // Back to main page on Login
-        document.getElementById('loginSubmit').onclick = function(e) {
-          e.preventDefault();
-        document.body.innerHTML = mainPage;
-        window.location.reload();
-    };
-        // Register link handler
-        document.getElementById('registerLink').onclick = function(e) {
-          e.preventDefault();
-        document.body.innerHTML = `
+  // Back to main page on Login
+  document.getElementById('loginSubmit').onclick = function (e) {
+    e.preventDefault();
+    document.body.innerHTML = mainPage;
+    window.location.reload();
+  };
+  // Register link handler
+  document.getElementById('registerLink').onclick = function (e) {
+    e.preventDefault();
+    document.body.innerHTML = `
         <div class="form width-350px">
           <h1 class=""><center>Registration</center></h1>
           <div class="mb-3">
@@ -87,30 +87,30 @@ console.log("Welcome to Monsoon Days Platform!");
           }
               </style>
               `;
-              // Back to login page
-              document.getElementById('loginBackLink').onclick = function(e) {
-                e.preventDefault();
-              document.getElementById('loginBtn').click();
-      };
-              // Register submit returns to main page
-              document.getElementById('registerSubmit').onclick = function(e) {
-                e.preventDefault();
-              document.body.innerHTML = mainPage;
-              window.location.reload();
-      };
+    // Back to login page
+    document.getElementById('loginBackLink').onclick = function (e) {
+      e.preventDefault();
+      document.getElementById('loginBtn').click();
     };
-  });
+    // Register submit returns to main page
+    document.getElementById('registerSubmit').onclick = function (e) {
+      e.preventDefault();
+      document.body.innerHTML = mainPage;
+      window.location.reload();
+    };
+  };
+});
 
-              document.querySelector('.btn.btn-light.btn-lg').addEventListener('click', function(e) {
-                e.preventDefault();
-              window.location.href = 'demo.html';
-  });
+document.querySelector('.btn.btn-light.btn-lg').addEventListener('click', function (e) {
+  e.preventDefault();
+  window.location.href = 'demo.html';
+});
 
-              document.querySelector('.nav-link[href="#Journals"], .nav-link[href="#"], .nav-link').addEventListener('click', function(e) {
+document.querySelector('.nav-link[href="#Journals"], .nav-link[href="#"], .nav-link').addEventListener('click', function (e) {
   if (this.textContent.trim() === 'Journals') {
-                e.preventDefault();
-              const mainPage = document.body.innerHTML;
-              document.body.innerHTML = `
+    e.preventDefault();
+    const mainPage = document.body.innerHTML;
+    document.body.innerHTML = `
               <h2 class="text-center mb-4">Share Your Monsoon Story</h2>
               <form id="uploadForm">
                 <div class="mb-3">
@@ -183,32 +183,42 @@ console.log("Welcome to Monsoon Days Platform!");
                 <\/script>
                 <button class="btn btn-secondary w-100 mt-3" id="backMain">Back to Main</button>
                 `;
-                // Back to main page
-                document.getElementById('backMain').onclick = function(e) {
-                  e.preventDefault();
-                document.body.innerHTML = mainPage;
-                window.location.reload();
+    // Back to main page
+    document.getElementById('backMain').onclick = function (e) {
+      e.preventDefault();
+      document.body.innerHTML = mainPage;
+      window.location.reload();
     };
   }
 });
 
-                // Redirect to article.html when Articles is clicked
-                Array.from(document.querySelectorAll('.nav-link')).forEach(function(link) {
+// Redirect to article.html when Articles is clicked
+Array.from(document.querySelectorAll('.nav-link')).forEach(function (link) {
   if (link.textContent.trim() === 'Articles') {
-                  link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    window.location.href = 'article.html';
-                  });
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      window.location.href = 'article.html';
+    });
   }
 });
 
-                // Redirect to community.html when Community is clicked
-                Array.from(document.querySelectorAll('.nav-link')).forEach(function(link) {
+// Redirect to community.html when Community is clicked
+Array.from(document.querySelectorAll('.nav-link')).forEach(function (link) {
   if (link.textContent.trim() === 'Community') {
-                  link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    window.location.href = 'community.html';
-                  });
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      window.location.href = 'community.html';
+    });
+  }
+});
+
+// Redirect to demo.html when Journals is clicked
+Array.from(document.querySelectorAll('.nav-link')).forEach(function (link) {
+  if (link.textContent.trim() === 'Journals') {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      window.location.href = 'demo.html';
+    });
   }
 });
 
