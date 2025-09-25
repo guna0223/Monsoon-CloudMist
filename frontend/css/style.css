@@ -12,7 +12,7 @@ body {
 
 .hero {
   height: 70vh;
-  background: url('/monsoon-days/frontend/images/bgimg.jpg') no-repeat center center;
+  background: url('images/bgimg.jpg') no-repeat center center;
   background-size: cover;
 }
 

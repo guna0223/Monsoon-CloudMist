@@ -143,6 +143,16 @@ def community():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+@app.route('/', defaults={'path': 'index.html'})
+@app.route('/<path:path>')
+def serve_static(path):
+    if path.endswith('.html'):
+        return send_from_directory('.', path)
+    elif path.startswith('frontend/'):
+        return send_from_directory('frontend', path.replace('frontend/', ''))
+    else:
+        return send_from_directory('.', path)
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
