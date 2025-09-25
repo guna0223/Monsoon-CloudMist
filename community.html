@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Monsoon Journalism — Community</title>
+
+  <!-- Simple reset + custom styles -->
+  <style>
+    :root {
+      --accent: #0072ff;
+      --accent-600: #005bb5;
+      --muted: #6b7280;
+      --bg: #f7fbff;
+      --card: #ffffff;
+      --radius: 12px;
+      --glass: rgba(255, 255, 255, 0.6);
+      --max-width: 1100px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, #f2f7ff 0%, #ffffff 100%);
+      color: #0f172a;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.45;
+      padding-bottom: 60px;
+    }
+
+    /* Container */
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Header / nav */
+    header.site-header {
+      background: var(--card);
+      border-radius: 0 0 18px 18px;
+      padding: 14px 20px;
+      box-shadow: 0 6px 20px rgba(17, 24, 39, 0.06);
+      position: sticky;
+      top: 12px;
+      z-index: 40;
+      margin: 12px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      justify-content: space-between;
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), #00c6ff);
+      display: inline-grid;
+      place-items: center;
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 6px 18px rgba(0, 114, 255, 0.12);
+    }
+
+    .brand h1 {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    nav.links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    nav a:hover,
+    nav a:focus {
+      color: var(--accent-600);
+      outline: none;
+      box-shadow: inset 0 -2px 0 var(--accent-600);
+    }
+
+    /* Hero / CTA */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 20px;
+      align-items: center;
+      margin: 28px auto;
+      max-width: var(--max-width);
+      padding: 24px;
+    }
+
+    .hero-card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), var(--glass));
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: 0 12px 40px rgba(2, 6, 23, 0.06);
+    }
+
+    .hero-card h2 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .hero-card p {
+      margin: 0 0 16px;
+      color: var(--muted);
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, var(--accent), var(--accent-600));
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 114, 255, 0.18);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--accent-600);
+      border: 1px solid rgba(0, 114, 255, 0.08);
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* Right-side card preview (small card showing community stats) */
+    .panel {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(12, 20, 50, 0.06);
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat {
+      text-align: center;
+      flex: 1;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 20px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Community section */
+    #community {
+      max-width: var(--max-width);
+      margin: 16px auto;
+      padding: 18px;
+    }
+
+    .updates {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .update-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 8px 24px rgba(12, 20, 50, 0.04);
+      min-height: 120px;
+    }
+
+    .update-card h3 {
+      margin-top: 0;
+      font-size: 16px;
+    }
+
+    .update-meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    /* Comment area */
+    .comment-area {
+      margin-top: 18px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .comment-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .comment {
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+      border-radius: 10px;
+      padding: 12px;
+      border: 1px solid rgba(2, 6, 23, 0.04);
+    }
+
+    .comment small {
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .comment-form {
+      width: 320px;
+      min-width: 240px;
+      background: var(--card);
+      padding: 12px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(4, 10, 65, 0.05);
+    }
+
+    .comment-form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      color: #0f172a;
+    }
+
+    .comment-form input,
+    .comment-form textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #e6eefb;
+      margin-bottom: 10px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .comment-form button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Small screens */
+    @media (max-width: 880px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 16px;
+      }
+
+      .updates {
+        grid-template-columns: 1fr;
+      }
+
+      .comment-form {
+        width: 100%;
+        min-width: 0;
+      }
+
+      header.site-header {
+        margin: 8px;
+        position: static;
+        border-radius: 10px;
+      }
+    }
+
+    /* Focus styles for accessibility */
+    a:focus,
+    button:focus,
+    input:focus,
+    textarea:focus {
+      outline: 3px solid rgba(0, 114, 255, 0.12);
+      outline-offset: 2px;
+      border-color: var(--accent-600);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header" role="banner">
+    <div class="nav container" role="navigation" aria-label="Main navigation">
+      <a href="#" class="brand" aria-label="Monsoon Tracker home">
+        <div class="logo">M</div>
+        <div>
+          <h1 style="font-size:16px; margin:0;">Monsoon Journal</h1>
+          <div style="font-size:12px; color:var(--muted)">Daily monsoon updates</div>
+        </div>
+      </a>
+
+      <nav class="links" aria-hidden="false">
+        <!-- Smooth scroll anchor to the community section -->
+        <a href="#community" id="community-link">Community</a>
+        <a href="#updates" style="display:none">Updates</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="top">
+    <!-- Hero with provided copy + CTA anchor -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-card" id="hero-title">
+        <h2>Community</h2>
+        <p style="margin-top:8px; margin-bottom:14px;">Connect with people who love the monsoon season.</p>
+
+        <div class="cta-row">
+          <a href="#community" class="btn-primary" aria-describedby="community-link">Join the community</a>
+          <button class="btn-ghost" id="new-observation">Share new observation</button>
+        </div>
+
+        <p style="margin-top:14px; color:var(--muted); font-size:13px;">
+          Read daily field updates, submit short reports from your area, and discuss changing patterns with fellow
+          monsoon watchers.
+        </p>
+      </div>
+
+      <!-- Right panel: quick stats -->
+      <aside class="panel" aria-labelledby="panel-stats">
+        <h4 id="panel-stats" style="margin:0 0 12px 0;">Community snapshot</h4>
+        <div class="stat-row">
+          <div class="stat"><b id="count-members">1.2k</b><span class="muted">members</span></div>
+          <div class="stat"><b id="count-updates">320</b><span class="muted">updates</span></div>
+          <div class="stat"><b id="count-comments">1.6k</b><span class="muted">comments</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Community Section (anchor target) -->
+    <section id="community" tabindex="-1" aria-labelledby="community-heading">
+      <h2 id="community-heading" style="margin:6px 0 12px 0;">Community updates & observations</h2>
+
+      <!-- Example updates grid -->
+      <div class="updates" id="updates">
+        <!-- JS will insert cards here -->
+      </div>
+
+      <!-- Comments: list + form -->
+      <div class="comment-area" style="margin-top:18px;">
+        <div class="comment-list" id="comment-list" aria-live="polite" aria-relevant="additions">
+          <!-- comments inserted here -->
+        </div>
+
+        <form id="comment-form" class="comment-form" aria-label="Post a comment">
+          <label for="cname">Your name</label>
+          <input id="cname" name="name" type="text" placeholder="e.g. Ravi" required />
+          <label for="ctext">Your observation</label>
+          <textarea id="ctext" name="text" rows="4" placeholder="What are you seeing where you live?"
+            required></textarea>
+          <button type="submit">Post observation</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Minimal JS for dynamic behaviors -->
+  <script>
+    /* Demo data for updates (you can replace with API data) */
+    const demoUpdates = [
+      { id: 1, date: '2025-09-24', place: 'Chennai', summary: 'Heavy morning downpour; waterlogging in low-lying areas.', img: '' },
+      { id: 2, date: '2025-09-24', place: 'Kochi', summary: 'Intermittent showers with cool breeze; river levels steady.', img: '' },
+      { id: 3, date: '2025-09-23', place: 'Goa', summary: 'Light showers; skies clearing in the afternoon.', img: '' },
+      { id: 4, date: '2025-09-22', place: 'Mumbai', summary: 'Showers with gusty winds near the coast.', img: '' }
+    ];
+
+    // Insert updates into the grid
+    function renderUpdates() {
+      const updatesEl = document.getElementById('updates');
+      updatesEl.innerHTML = '';
+      demoUpdates.forEach(u => {
+        const card = document.createElement('article');
+        card.className = 'update-card';
+        card.innerHTML = `
+        <div class="update-meta">${u.date} • <strong>${u.place}</strong></div>
+        <h3>${u.summary}</h3>
+        <div style="margin-top:8px; color:var(--muted); font-size:13px;">Share your local note below.</div>
+      `;
+        updatesEl.appendChild(card);
+      });
+    }
+
+    // Simple in-memory comments store for demo
+    const comments = [
+      { name: 'Anita', text: 'Heavy rain in my neighborhood around 7 AM. Streets flooded near the market.' },
+      { name: 'Ramesh', text: 'Light drizzle here. Nice cool weather.' }
+    ];
+
+    function renderComments() {
+      const list = document.getElementById('comment-list');
+      list.innerHTML = '';
+      if (comments.length === 0) {
+        list.innerHTML = '<div class="comment">No observations yet — be the first to post!</div>';
+        return;
+      }
+      comments.slice().reverse().forEach(c => { // newest first
+        const el = document.createElement('div');
+        el.className = 'comment';
+        el.innerHTML = <small>${escapeHtml(c.name)} • ${new Date().toLocaleString()}</small><div>${escapeHtml(c.text)}</div>;
+        list.appendChild(el);
+      });
+    }
+
+    // Escape to avoid XSS in demo
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, function (m) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
+      });
+    }
+
+    // Hook up the comment form
+    document.getElementById('comment-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('cname').value.trim();
+      const text = document.getElementById('ctext').value.trim();
+      if (!name || !text) return;
+      comments.push({ name, text });
+      renderComments();
+      // reset & focus for accessibility
+      e.target.reset();
+      document.getElementById('cname').focus();
+      // update stats (demo)
+      document.getElementById('count-comments').textContent = parseInt(document.getElementById('count-comments').textContent) + 1;
+    });
+
+    // New observation button scrolls to the comment form and focuses input
+    document.getElementById('new-observation').addEventListener('click', function () {
+      const target = document.getElementById('cname');
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => target.focus(), 450);
+    });
+
+    // Ensure anchor focus for keyboard users when arriving via link
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (ev) => {
+        const id = a.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        if (target) {
+          // Allow browser's smooth scroll (CSS) then set focus
+          setTimeout(() => target.focus({ preventScroll: true }), 500);
+        }
+      });
+    });
+
+    // Init render
+    renderUpdates();
+    renderComments();
+
+    // OPTIONAL: Replace demo data with a fetch to your API:
+    // fetch('/api/updates').then(r=>r.json()).then(data=>{ demoUpdates = data; renderUpdates(); });
+
+  </script>
+</body>
+
+</html>
