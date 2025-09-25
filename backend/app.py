@@ -143,15 +143,16 @@ def community():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route('/', defaults={'path': 'index.html'})
+@app.route('/')
+def index():
+    return send_from_directory('frontend', 'index.html')
+
 @app.route('/<path:path>')
 def serve_static(path):
-    if path.endswith('.html'):
-        return send_from_directory('.', path)
-    elif path.startswith('frontend/'):
-        return send_from_directory('frontend', path.replace('frontend/', ''))
+    if path.startswith('backend/'):
+        return send_from_directory('backend', path.replace('backend/', ''))
     else:
-        return send_from_directory('.', path)
+        return send_from_directory('frontend', path)
 
 if __name__ == '__main__':
     with app.app_context():

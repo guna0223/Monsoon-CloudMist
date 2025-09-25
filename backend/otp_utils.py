@@ -7,14 +7,14 @@ def generate_otp():
 
 # Send OTP via email using Flask-Mail
 def send_otp_email(recipient_email, otp):
-    from app import mail  # Import mail from app
-    subject = 'Your Monsoon Days OTP'
-    body = f'Your OTP for registration is: {otp}'
-
-    msg = Message(subject, sender='your_email@gmail.com', recipients=[recipient_email])
-    msg.body = body
-
     try:
+        from app import mail  # Import mail from app to avoid circular import
+        subject = 'Your Monsoon Days OTP'
+        body = f'Your OTP for registration is: {otp}'
+
+        msg = Message(subject, sender='your_email@gmail.com', recipients=[recipient_email])
+        msg.body = body
+
         mail.send(msg)
         return True
     except Exception as e:
