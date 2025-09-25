@@ -6,41 +6,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Monsoon Days Platform</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="shortcut icon" href="/frontend/images/logo/logo.jpg" type="image/x-icon">
+  <!-- own css -->
   <link rel="stylesheet" href="/frontend/css/style.css">
 </head>
 
 <body>
 
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg"
-    style="background-color:#e3f2fd;margin-bottom:0;padding-bottom:0;min-height:50px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:1001;">
-    <div class="container" style="margin-bottom:0;padding-bottom:0;min-height:50px;">
-      <a class="navbar-brand" href="#"
-        style="margin-bottom:0;padding-bottom:0;line-height:50px;text-decoration:none;">Monsoon Days</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav"
-        aria-controls="offcanvasNav" style="margin-bottom:0;padding-bottom:0;min-height:50px;">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-light">
+    <div class="container">
+      <img src="frontend/images/logo/logo.jpg" alt="" height="40px">
+      <a class="navbar-brand" href="#">Monsoon CloudMist</a>
+      <button class="navbar-toggler" data-bs-theme="dark" type="button" data-bs-theme="light" data-bs-toggle="collapse"
+        data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse d-none d-lg-flex justify-content-end" id="navbarNav"
-        style="margin-bottom:0;padding-bottom:0;min-height:50px;">
-        <!-- No links here, only in offcanvas -->
-      </div>
-      <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNav" aria-labelledby="offcanvasNavLabel"
-        data-bs-scroll="true">
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasNavLabel">Menu</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-
-        <div class="offcanvas-body" style="overflow-y:auto;max-height:80vh;">
-          <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Journals</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" id="articleLink">Articles</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" id="loginBtn">Login</a></li>
-
-          </ul>
-        </div>
+      <div class="collapse navbar-collapse " id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active text-primary" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link text-primary" href="#" id="articleLink">Articles</a></li>
+          <li class="nav-item"><a class="nav-link text-primary" href="#">Journals</a></li>
+          <li class="nav-item"><a class="nav-link text-primary" href="#" id="loginBtn">Login</a></li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -49,16 +37,19 @@
   <section class="hero text-center text-white d-flex align-items-center justify-content-center"
     style="background:none;">
     <div class="container py-4">
-  <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel" style="margin-top:2rem;">
+      <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel" style="margin-top:2rem;">
         <div class="carousel-inner" style="height:320px;">
           <div class="carousel-item active">
-            <img src="frontend/images/carousel/img1.jpg" class="d-block w-100" alt="..." style="height:320px;object-fit:cover;background:#e3f2fd;">
+            <img src="frontend/images/carousel/img1.jpg" class="d-block w-100" alt="..."
+              style="height:320px;object-fit:cover;background:#e3f2fd;">
           </div>
           <div class="carousel-item">
-            <img src="frontend/images/carousel/img2.jpg" class="d-block w-100" alt="..." style="height:320px;object-fit:cover;background:#e3f2fd;">
+            <img src="frontend/images/carousel/img2.jpg" class="d-block w-100" alt="..."
+              style="height:320px;object-fit:cover;background:#e3f2fd;">
           </div>
           <div class="carousel-item">
-            <img src="frontend/images/carousel/img3.jpg" class="d-block w-100" alt="..." style="height:320px;object-fit:cover;background:#e3f2fd;">
+            <img src="frontend/images/carousel/img3.jpg" class="d-block w-100" alt="..."
+              style="height:320px;object-fit:cover;background:#e3f2fd;">
           </div>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
@@ -70,16 +61,16 @@
           <span class="visually-hidden">Next</span>
         </button>
       </div>
-      <div class="mt-4">
-  <h1 style="margin-bottom:0;color:#000;">Welcome to Monsoon Days</h1>
-  <p style="margin-bottom:0;color:#000;">Share your monsoon stories and explore seasonal content!</p>
+      <div class="mt-4 start">
+        <h1 style="margin-bottom:0;color:#000;">Welcome to Monsoon Days</h1>
+        <p style="margin-bottom:0;color:#000;">Share your monsoon stories and explore seasonal content!</p>
         <a href="#" class="btn btn-light btn-lg" style="margin-bottom:0;">Start Journaling</a>
       </div>
     </div>
   </section>
 
   <!-- Features Section -->
-  <section class="container my-5">
+  <section class="container my-5 down">
     <div class="row text-center">
       <div class="col-md-4">
         <a href="demo.html" style="text-decoration:none;color:inherit;">
