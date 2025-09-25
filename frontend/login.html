@@ -53,7 +53,7 @@
     }
   </style>
   <script>
-    const API_BASE = window.location.origin;
+    const API_BASE = 'http://localhost:5000';
 
     document.getElementById('loginForm').onsubmit = async function(ev) {
       ev.preventDefault();
@@ -78,12 +78,12 @@
 
         if (response.ok) {
           localStorage.setItem('token', data.access_token);
-          alert('Login successful!');
           window.location.href = 'index.html';
         } else {
-          alert(data.message || 'Login failed.');
-          if (data.message.includes('User not found')) {
+          if (data.message && data.message.includes('User not found')) {
             window.location.href = 'register.html';
+          } else {
+            alert(data.message || 'Login failed.');
           }
         }
       } catch (error) {
