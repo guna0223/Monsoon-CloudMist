@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | Monsoon Days</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class='d-flex justify-content-center align-items-center' style='min-height:100vh;background:linear-gradient(120deg,#e0eafc,#cfdef3);'>
+    <div class='card shadow-lg p-4' style='width:350px;border-radius:6px;'>
+      <div class='text-center mb-3'>
+        <img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' alt='User' style='width:60px;border-radius:50%;margin-bottom:10px;'>
+        <h3 style='font-weight:700;'>Register for Monsoon Days</h3>
+        <p style='color:#6c757d;'>Create your account to join the community.</p>
+      </div>
+      <form id='registerForm'>
+        <div class='mb-3'>
+          <label class='form-label'>Username</label>
+          <input type='text' class='form-control' id='regUsername' placeholder='Enter username' style='border-radius:6px;'>
+        </div>
+        <div class='mb-3'>
+          <label class='form-label'>Email</label>
+          <input type='email' class='form-control' id='regEmail' placeholder='Enter email' style='border-radius:6px;'>
+        </div>
+        <div class='mb-3'>
+          <label class='form-label'>Password</label>
+          <input type='password' class='form-control' id='regPassword' placeholder='Enter password' style='border-radius:6px;'>
+        </div>
+        <button type='submit' class='btn btn-primary w-100' style='border-radius:6px;'>Register</button>
+      </form>
+      <div class='text-center mt-3'>
+        <span>Already have an account?</span> <a href='index.html' id='loginBackLink' style='color:#0d6efd;'>Login</a>
+      </div>
+    </div>
+  </div>
+  <style>
+    .card {
+      border-radius: 6px !important;
+      transition: box-shadow 0.3s, transform 0.3s;
+    }
+    .card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      transform: translateY(-4px) scale(1.03);
+    }
+    .btn-primary {
+      transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
+    }
+    .btn-primary:hover {
+      background: #0b5ed7;
+      box-shadow: 0 4px 12px rgba(13,110,253,0.18);
+      transform: scale(1.04);
+    }
+    .form-control, .btn {
+      border-radius: 6px !important;
+    }
+  </style>
+  <script>
+    document.getElementById('registerForm').onsubmit = function(ev) {
+      ev.preventDefault();
+      alert('Registration successful!');
+      window.location.href = 'index.html';
+    };
+    document.getElementById('loginBackLink').onclick = function(ev) {
+      ev.preventDefault();
+      window.location.href = 'index.html';
+    };
+  </script>
+</body>
+</html>
