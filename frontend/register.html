@@ -61,7 +61,7 @@
     }
   </style>
   <script>
-    const API_BASE = window.location.origin;
+    const API_BASE = 'http://localhost:5000';
 
     document.getElementById('registerForm').onsubmit = async function(ev) {
       ev.preventDefault();
@@ -91,60 +91,64 @@
 
         const data = await response.json();
 
-        // Silently show OTP form (no alert)
-        document.getElementById('registerForm').style.display = 'none';
-        document.querySelector('.text-center.mb-2').innerHTML = `
-          <img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' alt='User' style='width:50px;border-radius:50%;margin-bottom:8px;'>
-          <h4 style='font-weight:700;font-size:1.1rem;'>Verify OTP</h4>
-          <p style='color:#6c757d;font-size:0.9rem;'>Enter the OTP sent to your email (check backend console if not received).</p>
-        `;
-        // Remove existing OTP form if present
-        const existingOtpForm = document.getElementById('otpForm');
-        if (existingOtpForm) {
-          existingOtpForm.remove();
-        }
-        const otpForm = document.createElement('form');
-        otpForm.id = 'otpForm';
-        otpForm.innerHTML = `
-          <div class='mb-2'>
-            <label class='form-label' style='font-size:0.9rem;'>OTP</label>
-            <input type='text' class='form-control' id='otp' placeholder='Enter OTP' style='border-radius:6px;font-size:0.9rem;padding:0.4rem;' required>
-          </div>
-          <button type='submit' class='btn btn-primary w-100' style='border-radius:6px;font-size:0.9rem;padding:0.5rem;'>Verify</button>
-        `;
-        document.querySelector('.card').appendChild(otpForm);
-
-        otpForm.onsubmit = async function(e) {
-          e.preventDefault();
-          const otp = document.getElementById('otp').value;
-
-          if (!otp) {
-            alert('Please enter OTP.');
-            return;
+        if (response.ok) {
+          // Silently show OTP form (no alert)
+          document.getElementById('registerForm').style.display = 'none';
+          document.querySelector('.text-center.mb-2').innerHTML = `
+            <img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' alt='User' style='width:50px;border-radius:50%;margin-bottom:8px;'>
+            <h4 style='font-weight:700;font-size:1.1rem;'>Verify OTP</h4>
+            <p style='color:#6c757d;font-size:0.9rem;'>Enter the OTP sent to your email (check backend console if not received).</p>
+          `;
+          // Remove existing OTP form if present
+          const existingOtpForm = document.getElementById('otpForm');
+          if (existingOtpForm) {
+            existingOtpForm.remove();
           }
+          const otpForm = document.createElement('form');
+          otpForm.id = 'otpForm';
+          otpForm.innerHTML = `
+            <div class='mb-2'>
+              <label class='form-label' style='font-size:0.9rem;'>OTP</label>
+              <input type='text' class='form-control' id='otp' placeholder='Enter OTP' style='border-radius:6px;font-size:0.9rem;padding:0.4rem;' required>
+            </div>
+            <button type='submit' class='btn btn-primary w-100' style='border-radius:6px;font-size:0.9rem;padding:0.5rem;'>Verify</button>
+          `;
+          document.querySelector('.card').appendChild(otpForm);
 
-          try {
-            const verifyResponse = await fetch(`${API_BASE}/verify-otp`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ otp })
-            });
+          otpForm.onsubmit = async function(e) {
+            e.preventDefault();
+            const otp = document.getElementById('otp').value;
 
-            const verifyData = await verifyResponse.json();
-
-            if (verifyResponse.ok) {
-              alert('Registration successful!');
-              window.location.href = 'index.html';
-            } else {
-              alert(verifyData.message || 'OTP verification failed.');
+            if (!otp) {
+              alert('Please enter OTP.');
+              return;
             }
-          } catch (error) {
-            console.error('Error:', error);
-            alert('Verification failed. Check console for details.');
-          }
-        };
+
+            try {
+              const verifyResponse = await fetch(`${API_BASE}/verify-otp`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ otp })
+              });
+
+              const verifyData = await verifyResponse.json();
+
+              if (verifyResponse.ok) {
+                alert('Registration successful!');
+                window.location.href = 'index.html';
+              } else {
+                alert(verifyData.message || 'OTP verification failed.');
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              alert('Verification failed. Check console for details.');
+            }
+          };
+        } else {
+          alert(data.message || 'Registration failed.');
+        }
       } catch (error) {
         console.error('Error:', error);
         alert('Registration failed. Check console for details.');
