@@ -1,0 +1,28 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #e6f0f7;
+    padding: 30px;
+}
+
+#uploadForm {
+    max-width: 500px;
+    margin: auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+#uploadForm:hover {
+    transform: translateY(-5px);
+}
+
+#imagePreview {
+    display: none;
+    margin-top: 15px;
+    max-height: 200px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
