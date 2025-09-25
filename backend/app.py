@@ -55,15 +55,12 @@ def register():
     hashed_password = generate_password_hash(data['password'])
     data['password'] = hashed_password
     otp = generate_otp()
+    print(f"Generated OTP for testing: {otp}")  # Print OTP for dev testing
     session['otp'] = otp
     session['reg_data'] = data
-    print(f"Generated OTP for testing (email send failed): {otp}")  # Print OTP for dev testing
-    # Send OTP to email
-    email_sent = send_otp_email(data['email'], otp)
-    if email_sent:
-        return jsonify({'message': 'OTP sent to email'})
-    else:
-        return jsonify({'message': 'Failed to send OTP. Check console for OTP or configure email in config.py'}), 500
+    # Send OTP to email (silent fail for dev)
+    send_otp_email(data['email'], otp)
+    return jsonify({'message': 'OTP ready (check console if email fails)'}), 200
 
 # OTP verification endpoint
 @app.route('/verify-otp', methods=['POST'])
@@ -149,4 +146,6 @@ def uploaded_file(filename):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
