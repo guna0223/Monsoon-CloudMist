@@ -4,34 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register | Monsoon Days</title>
-  <link rel="shortcut icon" href="/frontend/images/logo/logo-1.png" type="image/x-icon">
+  <link rel="shortcut icon" href="/frontend/images/logo/logo.jpg" type="image/x-icon">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
   <div class='d-flex justify-content-center align-items-center' style='min-height:100vh;background:linear-gradient(120deg,#e0eafc,#cfdef3);'>
-    <div class='card shadow-lg p-4' style='width:350px;border-radius:6px;'>
-      <div class='text-center mb-3'>
-        <img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' alt='User' style='width:60px;border-radius:50%;margin-bottom:10px;'>
-        <h3 style='font-weight:700;'>Register for Monsoon Days</h3>
-        <p style='color:#6c757d;'>Create your account to join the community.</p>
+    <div class='card shadow-lg p-3' style='width:300px;border-radius:6px;'>
+      <div class='text-center mb-2'>
+        <img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' alt='User' style='width:50px;border-radius:50%;margin-bottom:8px;'>
+        <h4 style='font-weight:700;font-size:1.1rem;'>Register for Monsoon Days</h4>
+        <p style='color:#6c757d;font-size:0.9rem;'>Create your account to join the community.</p>
       </div>
       <form id='registerForm'>
-        <div class='mb-3'>
-          <label class='form-label'>Username</label>
-          <input type='text' class='form-control' id='regUsername' placeholder='Enter username' style='border-radius:6px;'>
+        <div class='mb-2'>
+          <label class='form-label' style='font-size:0.9rem;'>Username</label>
+          <input type='text' class='form-control' id='regUsername' placeholder='Enter username' style='border-radius:6px;font-size:0.9rem;padding:0.4rem;' required>
         </div>
-        <div class='mb-3'>
-          <label class='form-label'>Email</label>
-          <input type='email' class='form-control' id='regEmail' placeholder='Enter email' style='border-radius:6px;'>
+        <div class='mb-2'>
+          <label class='form-label' style='font-size:0.9rem;'>Email</label>
+          <input type='email' class='form-control' id='regEmail' placeholder='Enter email' style='border-radius:6px;font-size:0.9rem;padding:0.4rem;' required>
         </div>
-        <div class='mb-3'>
-          <label class='form-label'>Password</label>
-          <input type='password' class='form-control' id='regPassword' placeholder='Enter password' style='border-radius:6px;'>
+        <div class='mb-2'>
+          <label class='form-label' style='font-size:0.9rem;'>Password</label>
+          <input type='password' class='form-control' id='regPassword' placeholder='Enter password' style='border-radius:6px;font-size:0.9rem;padding:0.4rem;' required>
         </div>
-        <button type='submit' class='btn btn-primary w-100' style='border-radius:6px;'>Register</button>
+        <div class='mb-2'>
+          <label class='form-label' style='font-size:0.9rem;'>Confirm Password</label>
+          <input type='password' class='form-control' id='regConfirmPassword' placeholder='Confirm password' style='border-radius:6px;font-size:0.9rem;padding:0.4rem;' required>
+        </div>
+        <button type='submit' class='btn btn-primary w-100' style='border-radius:6px;font-size:0.9rem;padding:0.5rem;'>Register</button>
       </form>
-      <div class='text-center mt-3'>
-        <span>Already have an account?</span> <a href='index.html' id='loginBackLink' style='color:#0d6efd;'>Login</a>
+      <div class='text-center mt-2'>
+        <span style='font-size:0.85rem;'>Already have an account?</span> <a href='index.html' id='loginBackLink' style='color:#0d6efd;font-size:0.85rem;'>Login</a>
       </div>
     </div>
   </div>
@@ -57,11 +61,92 @@
     }
   </style>
   <script>
-    document.getElementById('registerForm').onsubmit = function(ev) {
+    const API_BASE = 'http://127.0.0.1:5000';
+
+    document.getElementById('registerForm').onsubmit = async function(ev) {
       ev.preventDefault();
-      alert('Registration successful!');
-      window.location.href = 'index.html';
+      const username = document.getElementById('regUsername').value;
+      const email = document.getElementById('regEmail').value;
+      const password = document.getElementById('regPassword').value;
+      const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+      if (!username || !email || !password || !confirmPassword) {
+        alert('Please fill all fields.');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, email, password })
+        });
+
+        const data = await response.json();
+
+        // Show OTP form even if email failed (for dev, OTP printed in console)
+        alert(data.message || 'Registration initiated. Check backend console for OTP if email failed.');
+        document.getElementById('registerForm').style.display = 'none';
+        document.querySelector('.text-center.mb-3').innerHTML = `
+          <img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' alt='User' style='width:60px;border-radius:50%;margin-bottom:10px;'>
+          <h3 style='font-weight:700;'>Verify OTP</h3>
+          <p style='color:#6c757d;'>Enter the OTP (check backend terminal console if email not received).</p>
+        `;
+        const otpForm = document.createElement('form');
+        otpForm.id = 'otpForm';
+        otpForm.innerHTML = `
+          <div class='mb-3'>
+            <label class='form-label'>OTP</label>
+            <input type='text' class='form-control' id='otp' placeholder='Enter OTP' style='border-radius:6px;' required>
+          </div>
+          <button type='submit' class='btn btn-primary w-100' style='border-radius:6px;'>Verify</button>
+        `;
+        document.querySelector('.card').appendChild(otpForm);
+
+        otpForm.onsubmit = async function(e) {
+          e.preventDefault();
+          const otp = document.getElementById('otp').value;
+
+          if (!otp) {
+            alert('Please enter OTP.');
+            return;
+          }
+
+          try {
+            const verifyResponse = await fetch(`${API_BASE}/verify-otp`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ otp })
+            });
+
+            const verifyData = await verifyResponse.json();
+
+            if (verifyResponse.ok) {
+              alert('Registration successful!');
+              window.location.href = 'index.html';
+            } else {
+              alert(verifyData.message || 'OTP verification failed.');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Verification failed. Check console for details.');
+          }
+        };
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Registration failed. Check console for details.');
+      }
     };
+
     document.getElementById('loginBackLink').onclick = function(ev) {
       ev.preventDefault();
       window.location.href = 'index.html';

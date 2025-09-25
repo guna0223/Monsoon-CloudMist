@@ -1,13 +1,23 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask_mail import Mail
+from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+import os
 from otp_utils import generate_otp, send_otp_email
+from config import Config
 
 app = Flask(__name__)
+app.config.from_object(Config)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///monsoon.db'
-app.config['SECRET_KEY'] = 'your_secret_key'  # Change this to a secure key
 db = SQLAlchemy(app)
+jwt = JWTManager(app)
+mail = Mail(app)
+
+# Ensure upload folder exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # User model
 class User(db.Model):
@@ -20,7 +30,9 @@ class User(db.Model):
 class Journal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
+    image_url = db.Column(db.String(300), nullable=True)
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
 
 # Article model
@@ -40,15 +52,18 @@ class CommunityPost(db.Model):
 @app.route('/register', methods=['POST'])
 def register():
     data = request.json
+    hashed_password = generate_password_hash(data['password'])
+    data['password'] = hashed_password
     otp = generate_otp()
     session['otp'] = otp
     session['reg_data'] = data
+    print(f"Generated OTP for testing (email send failed): {otp}")  # Print OTP for dev testing
     # Send OTP to email
     email_sent = send_otp_email(data['email'], otp)
     if email_sent:
         return jsonify({'message': 'OTP sent to email'})
     else:
-        return jsonify({'message': 'Failed to send OTP'}), 500
+        return jsonify({'message': 'Failed to send OTP. Check console for OTP or configure email in config.py'}), 500
 
 # OTP verification endpoint
 @app.route('/verify-otp', methods=['POST'])
@@ -69,26 +84,41 @@ def verify_otp():
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
-    user = User.query.filter_by(username=data['username'], password=data['password']).first()
-    if user:
-        return jsonify({'message': 'Login successful'})
-    return jsonify({'message': 'Invalid credentials'}), 401
+    user = User.query.filter_by(username=data['username']).first()
+    if not user:
+        return jsonify({'message': 'User not found. Please register first.'}), 401
+    if check_password_hash(user.password, data['password']):
+        access_token = create_access_token(identity=user.id)
+        return jsonify({'message': 'Login successful', 'access_token': access_token})
+    return jsonify({'message': 'Invalid password.'}), 401
 
 @app.route('/journals', methods=['GET', 'POST'])
+@jwt_required()
 def journals():
     if request.method == 'POST':
-        data = request.json
-        journal = Journal(user_id=data['user_id'], content=data['content'])
+        user_id = get_jwt_identity()
+        title = request.form.get('title')
+        content = request.form.get('content')
+        image = request.files.get('image')
+        image_url = None
+        if image:
+            filename = secure_filename(image.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image.save(filepath)
+            image_url = f'/uploads/{filename}'
+        journal = Journal(user_id=user_id, title=title, content=content, image_url=image_url)
         db.session.add(journal)
         db.session.commit()
         return jsonify({'message': 'Journal created'})
     else:
         journals = Journal.query.all()
-        return jsonify([{'id': j.id, 'user_id': j.user_id, 'content': j.content, 'timestamp': j.timestamp} for j in journals])
+        return jsonify([{'id': j.id, 'user_id': j.user_id, 'title': j.title, 'content': j.content, 'image_url': j.image_url, 'timestamp': j.timestamp} for j in journals])
 
 @app.route('/articles', methods=['GET', 'POST'])
+@jwt_required()
 def articles():
     if request.method == 'POST':
+        user_id = get_jwt_identity()
         data = request.json
         article = Article(title=data['title'], body=data['body'])
         db.session.add(article)
@@ -99,10 +129,12 @@ def articles():
         return jsonify([{'id': a.id, 'title': a.title, 'body': a.body, 'timestamp': a.timestamp} for a in articles])
 
 @app.route('/community', methods=['GET', 'POST'])
+@jwt_required()
 def community():
     if request.method == 'POST':
+        user_id = get_jwt_identity()
         data = request.json
-        post = CommunityPost(user_id=data['user_id'], content=data['content'])
+        post = CommunityPost(user_id=user_id, content=data['content'])
         db.session.add(post)
         db.session.commit()
         return jsonify({'message': 'Post created'})
@@ -110,6 +142,11 @@ def community():
         posts = CommunityPost.query.all()
         return jsonify([{'id': p.id, 'user_id': p.user_id, 'content': p.content, 'timestamp': p.timestamp} for p in posts])
 
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 if __name__ == '__main__':
-    db.create_all()
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)

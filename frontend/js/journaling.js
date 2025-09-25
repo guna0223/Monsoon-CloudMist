@@ -46,18 +46,52 @@ imgInput.addEventListener('change', function () {
     }
 });
 
+const API_BASE = 'http://127.0.0.1:5000';
+
 // Handle form submission
-uploadForm.addEventListener('submit', function (e) {
+uploadForm.addEventListener('submit', async function (e) {
     e.preventDefault();
     const title = document.getElementById('title').value;
-    const description = document.getElementById('description').value;
-    const imgSrc = imagePreview.src;
+    const content = document.getElementById('description').value;
+    const imageFile = document.getElementById('imageUpload').files[0];
 
-    if (!title || !description || !imgSrc) return;
+    if (!title || !content || !imageFile) {
+        alert('Please fill all fields and select an image.');
+        return;
+    }
 
-    alert(`Story Uploaded!\nTitle: ${title}\nDescription: ${description}`);
-    uploadForm.reset();
-    imagePreview.style.display = 'none';
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append('image', imageFile);
+
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        alert('Please login first.');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/journals`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            alert('Story uploaded successfully!');
+            uploadForm.reset();
+            imagePreview.style.display = 'none';
+        } else {
+            alert('Upload failed. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Upload failed. Check console for details.');
+    }
 });
 
 

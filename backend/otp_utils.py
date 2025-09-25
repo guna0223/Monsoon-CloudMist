@@ -1,31 +1,21 @@
 import random
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from flask_mail import Message
 
 # Generate a 6-digit OTP
 def generate_otp():
     return str(random.randint(100000, 999999))
 
-# Send OTP via email
+# Send OTP via email using Flask-Mail
 def send_otp_email(recipient_email, otp):
-    sender_email = 'your_email@gmail.com'  # Replace with your email
-    sender_password = 'your_password'      # Replace with your password
+    from app import mail  # Import mail from app
     subject = 'Your Monsoon Days OTP'
     body = f'Your OTP for registration is: {otp}'
 
-    msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = recipient_email
-    msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'plain'))
+    msg = Message(subject, sender='your_email@gmail.com', recipients=[recipient_email])
+    msg.body = body
 
     try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(sender_email, sender_password)
-        server.sendmail(sender_email, recipient_email, msg.as_string())
-        server.quit()
+        mail.send(msg)
         return True
     except Exception as e:
         print('Failed to send OTP:', e)
