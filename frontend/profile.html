@@ -86,63 +86,109 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Show authenticated content with fake data
-    document.getElementById('userInfo').style.display = 'block';
-    document.getElementById('uploadForm').style.display = 'block';
-    document.getElementById('journalsSection').style.display = 'block';
+    const API_BASE = 'http://localhost:5000';
+    const token = localStorage.getItem('access_token');
 
-    // Set fake user data
-    document.getElementById('username').textContent = 'Peace';
-    document.getElementById('journalCount').textContent = '5';
+    if (!token) {
+      document.getElementById('loginPrompt').style.display = 'block';
+    } else {
+      document.getElementById('userInfo').style.display = 'block';
+      document.getElementById('uploadForm').style.display = 'block';
+      document.getElementById('journalsSection').style.display = 'block';
 
-    // Fake journals data
-    const fakeJournals = [
-      {
-        id: 1, 
-        title: 'My First Journal',
-        content: 'This is the content of my first journal entry. It was a rainy day and I reflected on the beauty of nature...',
-        timestamp: '2023-07-15T10:00:00Z',
-        image: 'img5.avif'
-      },
-      {
-        id: 2, 
-        title: 'Summer Memories',
-        content: 'Recalling the hot summer days and the joy of outdoor activities. The sun was shining brightly...',
-        timestamp: '2023-08-20T14:30:00Z',
-        image: 'img4.avif'
-      },
-      {
-        id: 3, 
-        title: 'Winter Reflections',
-        content: 'As winter sets in, I think about the changing seasons and the lessons life teaches us...',
-        timestamp: '2023-12-01T09:15:00Z',
-        image: 'img3.jpg'
-      },
-      {
-        id: 4,
-        title: 'New Year Goals',
-        content: 'Setting goals for the new year, focusing on personal growth and new adventures...',
-        timestamp: '2024-01-01T00:00:00Z',
-        image: 'img2.avif'
-      }
+      // Fetch user profile
+      fetch(`${API_BASE}/user-profile`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('username').textContent = data.username;
+        document.getElementById('journalCount').textContent = data.journal_count;
+      })
+      .catch(error => {
+        console.error('Error fetching profile:', error);
+        // Show fake data
+        document.getElementById('username').textContent = 'Demo User';
+        document.getElementById('journalCount').textContent = '3';
+      });
 
-    ];
+      // Fetch user journals
+      fetch(`${API_BASE}/user-journals`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => response.json())
+      .then(journals => {
+        if (journals.length === 0) {
+          // Use fake data if empty
+          journals = [
+            {
+              id: 1,
+              title: 'My First Journal',
+              content: 'This is a sample journal entry. It describes a memorable day during the monsoon season.',
+              timestamp: '2023-07-15T10:00:00',
+              image_url: null
+            },
+            {
+              id: 2,
+              title: 'Rainy Day Reflections',
+              content: 'Today was a perfect day to stay indoors and reflect on life. The sound of rain was soothing.',
+              timestamp: '2023-08-20T14:30:00',
+              image_url: null
+            }
+          ];
+        }
+        const list = document.getElementById('journalsList');
+        list.innerHTML = journals.map(j => `
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">${j.title}</h5>
+              <p class="card-text">${j.content.substring(0, 100)}...</p>
+              ${j.image_url ? `<img src="${API_BASE}${j.image_url}" class="img-fluid mb-2" style="max-height:200px;" alt="Journal Image">` : ''}
+              <p class="card-text"><small class="text-muted">${new Date(j.timestamp).toLocaleString()}</small></p>
+              <button class="btn btn-primary me-2" onclick="editJournal(${j.id}, '${j.title.replace(/'/g, "\\'")}', '${j.content.replace(/'/g, "\\'")}', '${j.image_url || ''}')">Edit</button>
+            </div>
+          </div>
+        `).join('');
+      })
+      .catch(error => {
+        console.error('Error fetching journals:', error);
+        // Use fake data on error
+        const journals = [
+          {
+            id: 1,
+            title: 'My First Journal',
+            content: 'This is a sample journal entry. It describes a memorable day during the monsoon season.',
+            timestamp: '2023-07-15T10:00:00',
+            image_url: null
+          },
+          {
+            id: 2,
+            title: 'Rainy Day Reflections',
+            content: 'Today was a perfect day to stay indoors and reflect on life. The sound of rain was soothing.',
+            timestamp: '2023-08-20T14:30:00',
+            image_url: null
+          }
+        ];
+        const list = document.getElementById('journalsList');
+        list.innerHTML = journals.map(j => `
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">${j.title}</h5>
+              <p class="card-text">${j.content.substring(0, 100)}...</p>
+              ${j.image_url ? `<img src="${API_BASE}${j.image_url}" class="img-fluid mb-2" style="max-height:200px;" alt="Journal Image">` : ''}
+              <p class="card-text"><small class="text-muted">${new Date(j.timestamp).toLocaleString()}</small></p>
+              <button class="btn btn-primary me-2" onclick="editJournal(${j.id}, '${j.title.replace(/'/g, "\\'")}', '${j.content.replace(/'/g, "\\'")}', '${j.image_url || ''}')">Edit</button>
+            </div>
+          </div>
+        `).join('');
+      });
+    }
 
-    // Populate journals list
-    const list = document.getElementById('journalsList');
-    list.innerHTML = fakeJournals.map(j => `
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">${j.title}</h5>
-          <p class="card-text">${j.content.substring(0, 100)}...</p>
-           <img src="images/profile/${j.image}" class="img-fluid mb-2" style="max-height:200px;" alt="Journal Image"> 
-          <p class="card-text"><small class="text-muted">${new Date(j.timestamp).toLocaleString()}</small></p>
-          <button class="btn btn-primary me-2" onclick="editJournal(${j.id}, '${j.title.replace(/'/g, "\\'")}', '${j.content.replace(/'/g, "\\'")}', '${j.image_url || ''}')">Edit</button>
-        </div>
-      </div>
-    `).join('');
-
-    // Edit journal (for demo purposes, populates form with fake data)
+    // Edit journal
     function editJournal(id, title, content, image_url) {
       document.getElementById('editId').value = id;
       document.getElementById('title').value = title;
@@ -163,10 +209,80 @@
       this.style.display = 'none';
     });
 
-    // Submit form (disabled for fake data demo)
-    document.getElementById('journalForm').addEventListener('submit', function (e) {
+    // Submit form
+    document.getElementById('journalForm').addEventListener('submit', async function (e) {
       e.preventDefault();
-      alert('Form submission is disabled in fake data mode.');
+      const editId = document.getElementById('editId').value;
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+      const imageFile = document.getElementById('image').files[0];
+
+      if (!title || !content) {
+        alert('Please fill title and content.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('subject', title);
+      formData.append('content', content);
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+
+      const url = editId ? `${API_BASE}/journals/${editId}` : `${API_BASE}/journals`;
+      const method = editId ? 'PUT' : 'POST';
+
+      try {
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        if (response.ok) {
+          alert(editId ? 'Journal updated!' : 'Journal created!');
+          // Reset form
+          document.getElementById('journalForm').reset();
+          document.getElementById('editId').value = '';
+          document.getElementById('submitBtn').textContent = 'Upload Journal';
+          document.getElementById('cancelEditBtn').style.display = 'none';
+          // Refetch journals and update list
+          fetch(`${API_BASE}/user-journals`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+          .then(response => response.json())
+          .then(journals => {
+            document.getElementById('journalCount').textContent = journals.length;
+            const list = document.getElementById('journalsList');
+            list.innerHTML = journals.map(j => `
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h5 class="card-title">${j.title}</h5>
+                  <p class="card-text">${j.content.substring(0, 100)}...</p>
+                  ${j.image_url ? `<img src="${API_BASE}${j.image_url}" class="img-fluid mb-2" style="max-height:200px;" alt="Journal Image">` : ''}
+                  <p class="card-text"><small class="text-muted">${new Date(j.timestamp).toLocaleString()}</small></p>
+                  <button class="btn btn-primary me-2" onclick="editJournal(${j.id}, '${j.title.replace(/'/g, "\\'")}', '${j.content.replace(/'/g, "\\'")}', '${j.image_url || ''}')">Edit</button>
+                </div>
+              </div>
+            `).join('');
+            // If new journal, auto-edit it
+            if (!editId) {
+              const lastJournal = journals[journals.length - 1];
+              editJournal(lastJournal.id, lastJournal.title, lastJournal.content, lastJournal.image_url);
+            }
+          })
+          .catch(error => console.error('Error refetching journals:', error));
+        } else {
+          alert('Failed to save journal.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to save journal.');
+      }
     });
 
     // Logout

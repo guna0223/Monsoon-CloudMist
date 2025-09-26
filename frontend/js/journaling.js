@@ -46,7 +46,7 @@ imgInput.addEventListener('change', function () {
     }
 });
 
-const API_BASE = 'http://127.0.0.1:5000';
+const API_BASE = 'http://localhost:5000';
 
 // Handle form submission
 uploadForm.addEventListener('submit', async function (e) {
@@ -55,13 +55,13 @@ uploadForm.addEventListener('submit', async function (e) {
     const content = document.getElementById('description').value;
     const imageFile = document.getElementById('imageUpload').files[0];
 
-    if (!title || !content || !imageFile) {
-        alert('Please fill all fields and select an image.');
+    if (!title || !content) {
+        alert('Please fill title and content.');
         return;
     }
 
     const formData = new FormData();
-    formData.append('title', title);
+    formData.append('subject', title);
     formData.append('content', content);
     formData.append('image', imageFile);
 
@@ -85,8 +85,10 @@ uploadForm.addEventListener('submit', async function (e) {
             alert('Story uploaded successfully!');
             uploadForm.reset();
             imagePreview.style.display = 'none';
+            window.location.href = 'profile.html';
         } else {
-            alert('Upload failed. Please try again.');
+            const errorText = await response.text();
+            alert(`Upload failed: ${response.status} - ${errorText}`);
         }
     } catch (error) {
         console.error('Error:', error);

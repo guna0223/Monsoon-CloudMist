@@ -61,7 +61,7 @@
     }
   </style>
   <script>
-    const API_BASE = 'http://localhost:5000';
+    const API_BASE = window.location.origin;
 
     document.getElementById('registerForm').onsubmit = async function(ev) {
       ev.preventDefault();

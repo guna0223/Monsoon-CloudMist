@@ -32,3 +32,28 @@ function openImage() {
     const path = '/mnt/data/1670ccff-ff26-45f8-8745-09f71f2b1625.jpg';
     window.open(path, '_blank');
 }
+
+// Fetch and display articles
+const API_BASE = 'http://localhost:5000';
+const token = localStorage.getItem('access_token');
+
+fetch(`${API_BASE}/articles`, {
+    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+})
+.then(response => response.json())
+.then(articles => {
+    if (articles.length > 0) {
+        // Assuming articles are displayed in a specific section, but since article.html is static content, perhaps add a section for dynamic articles
+        // For now, just log or handle if needed
+        console.log('Articles:', articles);
+        // If there's a place to display, e.g., append to a div
+        const articleContainer = document.querySelector('.article');
+        if (articleContainer) {
+            // Maybe add a list of articles before the main article
+            const articleList = document.createElement('div');
+            articleList.innerHTML = '<h2>Latest Articles</h2>' + articles.map(a => `<div><h3>${a.title}</h3><p>${a.body.substring(0, 200)}...</p></div>`).join('');
+            articleContainer.insertBefore(articleList, articleContainer.firstChild);
+        }
+    }
+})
+.catch(error => console.error('Error fetching articles:', error));

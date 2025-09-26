@@ -67,16 +67,38 @@
   </div>
 
   <script>
-    document.getElementById('loginForm').onsubmit = function (ev) {
+    const API_BASE = window.location.origin;
+
+    document.getElementById('loginForm').onsubmit = async function (ev) {
       ev.preventDefault();
       const username = document.getElementById('loginUsername').value;
       const password = document.getElementById('loginPassword').value;
 
-      if (username === 'gunasekarpeace@gmail.com' && password === '12345') {
-        localStorage.setItem('access_token', 'fake_token');
-        window.location.href = 'index.html';
-      } else {
-        alert('invalid user name');
+      if (!username || !password) {
+        alert('Please enter username and password.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          localStorage.setItem('access_token', data.access_token);
+          window.location.href = 'index.html';
+        } else {
+          alert(data.message || 'Login failed.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Login failed. Check console for details.');
       }
     };
 

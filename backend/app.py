@@ -63,9 +63,10 @@ def register():
     print(f"Generated OTP for testing: {otp}")  # Print OTP for dev testing
     session['otp'] = otp
     session['reg_data'] = data
-    # Send OTP to email (silent fail for dev)
-    send_otp_email(data['email'], otp)
-    return jsonify({'message': 'OTP ready (check console if email fails)'}), 200
+    # Send OTP to email
+    if not send_otp_email(data['email'], otp):
+        return jsonify({'message': 'Failed to send OTP email. Check server logs for details.'}), 500
+    return jsonify({'message': 'OTP sent to your email'}), 200
 
 # OTP verification endpoint
 @app.route('/verify-otp', methods=['POST'])
@@ -99,11 +100,13 @@ def login():
 def journals():
     if request.method == 'POST':
         user_id = get_jwt_identity()
-        title = request.form.get('title')
+        title = request.form.get('subject')
         content = request.form.get('content')
+        if not title or not content:
+            return jsonify({'message': 'Title and content are required'}), 422
         image = request.files.get('image')
         image_url = None
-        if image:
+        if image and image.filename:
             filename = secure_filename(image.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             image.save(filepath)
@@ -138,7 +141,7 @@ def update_journal(journal_id):
     journal = Journal.query.get_or_404(journal_id)
     if journal.user_id != user_id:
         return jsonify({'message': 'Unauthorized'}), 403
-    title = request.form.get('title', journal.title)
+    title = request.form.get('subject', journal.title)
     content = request.form.get('content', journal.content)
     image = request.files.get('image')
     if image:
