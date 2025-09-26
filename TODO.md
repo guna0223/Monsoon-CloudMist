@@ -1,2 +1,1 @@
-- [x] Edit frontend/login.html: Update the failure alert message to "invalid user name" and remove the redirect to register.html on failure, so the user stays on the login page after the alert.
-- [x] Edit frontend/index.html: Remove the inline login form and change the login button to redirect to login.html.
+- [x] Add profile image to userInfo div in frontend/profile.html
