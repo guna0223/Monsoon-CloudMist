@@ -87,12 +87,11 @@ uploadForm.addEventListener('submit', async function (e) {
             imagePreview.style.display = 'none';
             window.location.href = 'profile.html';
         } else {
-            const errorText = await response.text();
-            alert(`Upload failed: ${response.status} - ${errorText}`);
+            alert('Upload failed.');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Upload failed. Check console for details.');
+        alert('Upload failed.');
     }
 });
 
