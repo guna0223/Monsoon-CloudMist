@@ -1,4 +1,4 @@
-- [x] Add /user-profile endpoint in backend/app.py to return username and journal count
-- [x] Modify frontend/profile.html to add HTML elements for username and journal count
-- [x] Add JavaScript in profile.html to fetch user profile data and populate the elements
-- [x] Test the profile page functionality
+- [x] Modify JavaScript in profile.html to always display authenticated content (hide login prompt, show user info, upload form, and journals section)
+- [x] Set fake username to "John Doe" and journal count to 5 directly in the HTML
+- [x] Populate the journals list with 4 fake journal entries (title, content snippet, timestamp, and image placeholder)
+- [x] Remove or comment out API fetch calls for profile and journals, replacing with static fake data

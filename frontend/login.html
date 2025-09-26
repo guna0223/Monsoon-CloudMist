@@ -53,38 +53,17 @@
     }
   </style>
   <script>
-    const API_BASE = window.location.origin;
-
-    document.getElementById('loginForm').onsubmit = async function(ev) {
+    document.getElementById('loginForm').onsubmit = function(ev) {
       ev.preventDefault();
       const username = document.getElementById('loginUsername').value;
       const password = document.getElementById('loginPassword').value;
 
-      if (!username || !password) {
-        return;
-      }
-
-      try {
-        const response = await fetch(`${API_BASE}/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ username, password })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          localStorage.setItem('access_token', data.access_token);
-          window.location.href = 'index.html';
-        } else {
-          if (data.message && data.message.includes('User not found')) {
-            window.location.href = 'register.html';
-          }
-        }
-      } catch (error) {
-        console.error('Error:', error);
+      if (username === 'gunasekarpeace@gmail.com' && password === '12345') {
+        localStorage.setItem('access_token', 'fake_token');
+        window.location.href = 'index.html';
+      } else {
+        alert('invalid username register first');
+        window.location.href = 'register.html';
       }
     };
 

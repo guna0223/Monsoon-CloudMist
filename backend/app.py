@@ -92,7 +92,7 @@ def login():
     if check_password_hash(user.password, data['password']):
         access_token = create_access_token(identity=user.id)
         return jsonify({'message': 'Login successful', 'access_token': access_token})
-    return jsonify({'message': 'Invalid password.'}), 401
+    return jsonify({'message': 'invalide username'}), 401
 
 @app.route('/journals', methods=['GET', 'POST'])
 @jwt_required()
