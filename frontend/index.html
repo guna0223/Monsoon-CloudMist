@@ -112,74 +112,7 @@
 
     document.getElementById('loginBtn').addEventListener('click', function (e) {
       e.preventDefault();
-      const mainPage = document.body.innerHTML;
-      document.body.innerHTML = `
-      <div class='d-flex justify-content-center align-items-center' style='min-height:100vh;background:linear-gradient(120deg,#e0eafc,#cfdef3);margin:0;'>
-        <div class='card shadow-lg p-4' style='width:350px;border-radius:6px;'>
-          <div class='text-center mb-3' style='margin-top:0;'>
-            <img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' alt='User' style='width:60px;border-radius:50%;margin-bottom:10px;'>
-            <h3 style='font-weight:700;margin-top:0;'>Login to Monsoon Days</h3>
-            <p style='color:#6c757d;margin-top:0;'>Welcome back! Please login to continue.</p>
-          </div>
-          <form id='loginForm'>
-            <div class='mb-3'>
-              <label class='form-label'>Username</label>
-              <input type='text' class='form-control' id='username' placeholder='Enter username' style='border-radius:6px;' required>
-            </div>
-            <div class='mb-3'>
-              <label class='form-label'>Password</label>
-              <input type='password' class='form-control' id='password' placeholder='Enter password' style='border-radius:6px;' required>
-            </div>
-            <button type='submit' class='btn btn-primary w-100' style='border-radius:6px;'>Login</button>
-          </form>
-          <div class='text-center mt-3'>
-            <span>Not a user?</span> <a href='#' id='registerLink' style='color:#0d6efd;'>Register</a>
-          </div>
-        </div>
-      </div>
-      <style>
-        html, body { margin: 0 !important; padding: 0 !important; }
-        .card { border-radius: 6px !important; }
-        .form-control, .btn { border-radius: 6px !important; }
-      </style>
-    `;
-      document.getElementById('loginForm').onsubmit = async function (ev) {
-        ev.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        if (!username || !password) {
-          return;
-        }
-
-        try {
-          const response = await fetch(`${API_BASE}/login`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-          });
-
-          const data = await response.json();
-
-          if (response.ok) {
-            localStorage.setItem('access_token', data.access_token);
-            document.body.innerHTML = mainPage;
-            window.location.reload();
-          } else {
-            if (data.message.includes('User not found')) {
-              window.location.href = 'register.html';
-            }
-          }
-        } catch (error) {
-          console.error('Error:', error);
-        }
-      };
-      document.getElementById('registerLink').onclick = function (ev) {
-        ev.preventDefault();
-        window.location.href = 'register.html';
-      };
+      window.location.href = 'login.html';
     });
 
     document.getElementById('profileBtn').addEventListener('click', function (e) {

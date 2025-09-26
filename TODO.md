@@ -1,4 +1,2 @@
-- [x] Modify JavaScript in profile.html to always display authenticated content (hide login prompt, show user info, upload form, and journals section)
-- [x] Set fake username to "John Doe" and journal count to 5 directly in the HTML
-- [x] Populate the journals list with 4 fake journal entries (title, content snippet, timestamp, and image placeholder)
-- [x] Remove or comment out API fetch calls for profile and journals, replacing with static fake data
+- [x] Edit frontend/login.html: Update the failure alert message to "invalid user name" and remove the redirect to register.html on failure, so the user stays on the login page after the alert.
+- [x] Edit frontend/index.html: Remove the inline login form and change the login button to redirect to login.html.
