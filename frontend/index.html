@@ -27,6 +27,7 @@
           <li class="nav-item"><a class="nav-link active text-primary" href="#">Home</a></li>
           <li class="nav-item"><a class="nav-link text-primary" href="#" id="articleLink">Articles</a></li>
           <li class="nav-item"><a class="nav-link text-primary" href="#">Journals</a></li>
+          <li class="nav-item"><a class="nav-link text-primary" href="#" id="profileBtn">Profile</a></li>
           <li class="nav-item"><a class="nav-link text-primary" href="#" id="loginBtn">Login</a></li>
         </ul>
       </div>
@@ -185,6 +186,11 @@
         ev.preventDefault();
         window.location.href = 'register.html';
       };
+    });
+
+    document.getElementById('profileBtn').addEventListener('click', function (e) {
+      e.preventDefault();
+      window.location.href = 'profile.html';
     });
   </script>
 

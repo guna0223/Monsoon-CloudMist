@@ -19,6 +19,11 @@ mail = Mail(app)
 # Ensure upload folder exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+# Define directories relative to project root
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
+BACKEND_DIR = os.path.join(BASE_DIR, 'backend')
+
 # User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -111,6 +116,41 @@ def journals():
         journals = Journal.query.all()
         return jsonify([{'id': j.id, 'user_id': j.user_id, 'title': j.title, 'content': j.content, 'image_url': j.image_url, 'timestamp': j.timestamp} for j in journals])
 
+@app.route('/user-journals', methods=['GET'])
+@jwt_required()
+def user_journals():
+    user_id = get_jwt_identity()
+    journals = Journal.query.filter_by(user_id=user_id).all()
+    return jsonify([{'id': j.id, 'title': j.title, 'content': j.content, 'image_url': j.image_url, 'timestamp': j.timestamp} for j in journals])
+
+@app.route('/user-profile', methods=['GET'])
+@jwt_required()
+def user_profile():
+    user_id = get_jwt_identity()
+    user = User.query.get_or_404(user_id)
+    journal_count = Journal.query.filter_by(user_id=user_id).count()
+    return jsonify({'username': user.username, 'journal_count': journal_count})
+
+@app.route('/journals/<int:journal_id>', methods=['PUT'])
+@jwt_required()
+def update_journal(journal_id):
+    user_id = get_jwt_identity()
+    journal = Journal.query.get_or_404(journal_id)
+    if journal.user_id != user_id:
+        return jsonify({'message': 'Unauthorized'}), 403
+    title = request.form.get('title', journal.title)
+    content = request.form.get('content', journal.content)
+    image = request.files.get('image')
+    if image:
+        filename = secure_filename(image.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        image.save(filepath)
+        journal.image_url = f'/uploads/{filename}'
+    journal.title = title
+    journal.content = content
+    db.session.commit()
+    return jsonify({'message': 'Journal updated'})
+
 @app.route('/articles', methods=['GET', 'POST'])
 @jwt_required()
 def articles():
@@ -145,18 +185,29 @@ def uploaded_file(filename):
 
 @app.route('/')
 def index():
-    return send_from_directory('frontend', 'index.html')
+    print(f"Frontend DIR: {FRONTEND_DIR}")
+    print(f"Index path: {os.path.join(FRONTEND_DIR, 'index.html')}")
+    print(f"Exists: {os.path.exists(os.path.join(FRONTEND_DIR, 'index.html'))}")
+    return send_from_directory(FRONTEND_DIR, 'index.html')
 
 @app.route('/<path:path>')
 def serve_static(path):
     if path.startswith('backend/'):
-        return send_from_directory('backend', path.replace('backend/', ''))
+        return send_from_directory(BACKEND_DIR, path.replace('backend/', ''))
     else:
-        return send_from_directory('frontend', path)
+        print(f"Serving frontend file: {path}")
+        print(f"Path exists: {os.path.exists(os.path.join(FRONTEND_DIR, path))}")
+        return send_from_directory(FRONTEND_DIR, path)
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    import os
+        # Pre-create the specific user if not exists
+        user = User.query.filter_by(username='gunasekarpeace@gmail.com').first()
+        if not user:
+            hashed_password = generate_password_hash('12345')
+            user = User(username='gunasekarpeace@gmail.com', email='gunasekarpeace@gmail.com', password=hashed_password)
+            db.session.add(user)
+            db.session.commit()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)

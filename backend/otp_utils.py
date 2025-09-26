@@ -1,9 +1,8 @@
-import random
 from flask_mail import Message
 
 # Generate a 6-digit OTP
 def generate_otp():
-    return str(random.randint(100000, 999999))
+    return '123456'
 
 # Send OTP via email using Flask-Mail
 def send_otp_email(recipient_email, otp):

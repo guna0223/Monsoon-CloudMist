@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - Monsoon Days</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-light">
+    <div class="container">
+      <img src="images/logo/logo.jpg" alt="" height="40px">
+      <a class="navbar-brand" href="index.html">Monsoon CloudMist</a>
+      <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link text-primary" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link text-primary" href="article.html">Articles</a></li>
+          <li class="nav-item"><a class="nav-link text-primary" href="demo.html">Journals</a></li>
+          <li class="nav-item"><a class="nav-link active text-primary" href="profile.html">Profile</a></li>
+          <li class="nav-item"><a class="nav-link text-primary" href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-5">
+    <h1 class="mb-4">Your Profile</h1>
+
+    <!-- Login Prompt for Non-Authenticated Users -->
+    <div id="loginPrompt" class="alert alert-info" style="display: none;">
+      <h4>Please log in to view your profile.</h4>
+      <p>To see your username, story count, upload new journals, and view your old stories, <a href="login.html" class="alert-link">click here to login</a>.</p>
+    </div>
+
+    <!-- User Info -->
+    <div id="userInfo" class="mb-4" style="display: none;">
+      <h2>Welcome, <span id="username">Loading...</span></h2>
+      <p>You have <span id="journalCount">0</span> stories.</p>
+    </div>
+
+    <!-- Upload New Journal Form -->
+    <div id="uploadForm" class="card mb-4" style="display: none;">
+      <div class="card-header">
+        <h3>Upload New Journal</h3>
+      </div>
+      <div class="card-body">
+        <form id="journalForm" enctype="multipart/form-data">
+          <input type="hidden" id="editId" value="">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" required>
+          </div>
+          <div class="mb-3">
+            <label for="content" class="form-label">Content</label>
+            <textarea class="form-control" id="content" rows="5" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="image" class="form-label">Image (optional)</label>
+            <input type="file" class="form-control" id="image" accept="image/*">
+          </div>
+          <button type="submit" class="btn btn-primary" id="submitBtn">Upload Journal</button>
+          <button type="button" class="btn btn-secondary ms-2" id="cancelEditBtn" style="display:none;">Cancel Edit</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Journals List -->
+    <div id="journalsSection" class="card" style="display: none;">
+      <div class="card-header">
+        <h3>Your Journals</h3>
+      </div>
+      <div class="card-body">
+        <div id="journalsList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const API_BASE = window.location.origin;
+    const token = localStorage.getItem('access_token');
+
+    if (!token) {
+      // Show login prompt and hide authenticated content
+      document.getElementById('loginPrompt').style.display = 'block';
+    } else {
+      // Show authenticated content
+      document.getElementById('userInfo').style.display = 'block';
+      document.getElementById('uploadForm').style.display = 'block';
+      document.getElementById('journalsSection').style.display = 'block';
+
+      // Fetch user profile
+      async function loadProfile() {
+        try {
+          const response = await fetch(`${API_BASE}/user-profile`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            document.getElementById('username').textContent = data.username;
+            document.getElementById('journalCount').textContent = data.journal_count;
+          } else {
+            alert('Failed to load profile');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error loading profile');
+        }
+      }
+
+      // Fetch and display journals
+      async function loadJournals() {
+        try {
+          const response = await fetch(`${API_BASE}/user-journals`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          if (response.ok) {
+            const journals = await response.json();
+            const list = document.getElementById('journalsList');
+            list.innerHTML = journals.map(j => `
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h5 class="card-title">${j.title}</h5>
+                  <p class="card-text">${j.content.substring(0, 100)}...</p>
+                  ${j.image_url ? `<img src="${j.image_url}" class="img-fluid mb-2" style="max-height:200px;" alt="Journal Image">` : ''}
+                  <p class="card-text"><small class="text-muted">${new Date(j.timestamp).toLocaleString()}</small></p>
+                  <button class="btn btn-primary me-2" onclick="editJournal(${j.id}, '${j.title.replace(/'/g, "\\'")}', '${j.content.replace(/'/g, "\\'")}', '${j.image_url || ''}')">Edit</button>
+                </div>
+              </div>
+            `).join('');
+          } else {
+            alert('Failed to load journals');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error loading journals');
+        }
+      }
+
+      // Load profile and journals for authenticated user
+      loadProfile();
+      loadJournals();
+    }
+
+    // Edit journal
+    function editJournal(id, title, content, image_url) {
+      document.getElementById('editId').value = id;
+      document.getElementById('title').value = title;
+      document.getElementById('content').value = content;
+      document.getElementById('submitBtn').textContent = 'Update Journal';
+      document.getElementById('cancelEditBtn').style.display = 'inline-block';
+      // Scroll to form
+      document.querySelector('#journalForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Cancel edit
+    document.getElementById('cancelEditBtn').addEventListener('click', function() {
+      document.getElementById('editId').value = '';
+      document.getElementById('title').value = '';
+      document.getElementById('content').value = '';
+      document.getElementById('image').value = '';
+      document.getElementById('submitBtn').textContent = 'Upload Journal';
+      this.style.display = 'none';
+    });
+
+    // Submit form
+    document.getElementById('journalForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const editId = document.getElementById('editId').value;
+      const formData = new FormData();
+      formData.append('title', document.getElementById('title').value);
+      formData.append('content', document.getElementById('content').value);
+      const imageFile = document.getElementById('image').files[0];
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+
+      try {
+        let response;
+        if (editId) {
+          response = await fetch(`${API_BASE}/journals/${editId}`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            body: formData
+          });
+        } else {
+          response = await fetch(`${API_BASE}/journals`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            body: formData
+          });
+        }
+
+        if (response.ok) {
+          alert(editId ? 'Journal updated!' : 'Journal created!');
+          // Reset form
+          document.getElementById('editId').value = '';
+          document.getElementById('title').value = '';
+          document.getElementById('content').value = '';
+          document.getElementById('image').value = '';
+          document.getElementById('submitBtn').textContent = 'Upload Journal';
+          document.getElementById('cancelEditBtn').style.display = 'none';
+          // Reload journals
+          loadJournals();
+        } else {
+          alert('Failed to save journal');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error saving journal');
+      }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      localStorage.removeItem('access_token');
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>
