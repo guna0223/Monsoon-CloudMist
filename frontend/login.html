@@ -61,7 +61,6 @@
       const password = document.getElementById('loginPassword').value;
 
       if (!username || !password) {
-        alert('Please fill all fields.');
         return;
       }
 
@@ -82,13 +81,10 @@
         } else {
           if (data.message && data.message.includes('User not found')) {
             window.location.href = 'register.html';
-          } else {
-            alert(data.message || 'Login failed.');
           }
         }
       } catch (error) {
         console.error('Error:', error);
-        alert('Login failed. Check console for details.');
       }
     };
 
