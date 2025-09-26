@@ -102,17 +102,17 @@
           'Authorization': `Bearer ${token}`
         }
       })
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('username').textContent = data.username;
-        document.getElementById('journalCount').textContent = data.journal_count;
-      })
-      .catch(error => {
-        console.error('Error fetching profile:', error);
-        // Show fake data
-        document.getElementById('username').textContent = 'Demo User';
-        document.getElementById('journalCount').textContent = '3';
-      });
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('username').textContent = data.username;
+          document.getElementById('journalCount').textContent = data.journal_count;
+        })
+        .catch(error => {
+          console.error('Error fetching profile:', error);
+          // Show fake data
+          document.getElementById('username').textContent = 'Demo User';
+          document.getElementById('journalCount').textContent = '3';
+        });
 
       // Fetch user journals
       fetch(`${API_BASE}/user-journals`, {
@@ -120,72 +120,72 @@
           'Authorization': `Bearer ${token}`
         }
       })
-      .then(response => response.json())
-      .then(journals => {
-        if (journals.length === 0) {
-          // Use fake data if empty
-          journals = [
+        .then(response => response.json())
+        .then(journals => {
+          if (journals.length === 0) {
+            // Use fake data if empty
+            journals = [
+              {
+                id: 1,
+                title: 'My First Journal',
+                content: 'This is a sample journal entry. It describes a memorable day during the monsoon season.',
+                timestamp: '2023-07-15T10:00:00',
+                image_url: null
+              },
+              {
+                id: 2,
+                title: 'Rainy Day Reflections',
+                content: 'Today was a perfect day to stay indoors and reflect on life. The sound of rain was soothing.',
+                timestamp: '2023-08-20T14:30:00',
+                image_url: null
+              }
+            ];
+          }
+          const list = document.getElementById('journalsList');
+          list.innerHTML = journals.map(j => `
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">${j.title}</h5>
+              <p class="card-text">${j.content.substring(0, 100)}...</p>
+              ${j.image_url ? `<img src="${API_BASE}${j.image_url}" class="img-fluid mb-2" style="max-height:200px;" alt="Journal Image">` : ''}
+              <p class="card-text"><small class="text-muted">${new Date(j.timestamp).toLocaleString()}</small></p>
+              <button class="btn btn-primary me-2" onclick="editJournal(${j.id}, '${j.title.replace(/'/g, "\\'")}', '${j.content.replace(/'/g, "\\'")}', '${j.image_url || ''}')">Edit</button>
+            </div>
+          </div>
+        `).join('');
+        })
+        .catch(error => {
+          console.error('Error fetching journals:', error);
+          // Use fake data on error
+          const journals = [
             {
               id: 1,
               title: 'My First Journal',
               content: 'This is a sample journal entry. It describes a memorable day during the monsoon season.',
               timestamp: '2023-07-15T10:00:00',
-              image_url: null
+              image_url: "img4.avif"
             },
             {
               id: 2,
               title: 'Rainy Day Reflections',
               content: 'Today was a perfect day to stay indoors and reflect on life. The sound of rain was soothing.',
               timestamp: '2023-08-20T14:30:00',
-              image_url: null
+              image_url: "img5.avif"
             }
           ];
-        }
-        const list = document.getElementById('journalsList');
-        list.innerHTML = journals.map(j => `
+          const list = document.getElementById('journalsList');
+          list.innerHTML = journals.map(j => `
           <div class="card mb-3">
             <div class="card-body">
               <h5 class="card-title">${j.title}</h5>
               <p class="card-text">${j.content.substring(0, 100)}...</p>
-              ${j.image_url ? `<img src="${API_BASE}${j.image_url}" class="img-fluid mb-2" style="max-height:200px;" alt="Journal Image">` : ''}
+              <img src="images/profile/${j.image_url}" class="img-fluid mb-2" style="max-height:200px;" alt="Journal Image">
               <p class="card-text"><small class="text-muted">${new Date(j.timestamp).toLocaleString()}</small></p>
               <button class="btn btn-primary me-2" onclick="editJournal(${j.id}, '${j.title.replace(/'/g, "\\'")}', '${j.content.replace(/'/g, "\\'")}', '${j.image_url || ''}')">Edit</button>
             </div>
           </div>
         `).join('');
-      })
-      .catch(error => {
-        console.error('Error fetching journals:', error);
-        // Use fake data on error
-        const journals = [
-          {
-            id: 1,
-            title: 'My First Journal',
-            content: 'This is a sample journal entry. It describes a memorable day during the monsoon season.',
-            timestamp: '2023-07-15T10:00:00',
-            image_url: null
-          },
-          {
-            id: 2,
-            title: 'Rainy Day Reflections',
-            content: 'Today was a perfect day to stay indoors and reflect on life. The sound of rain was soothing.',
-            timestamp: '2023-08-20T14:30:00',
-            image_url: null
-          }
-        ];
-        const list = document.getElementById('journalsList');
-        list.innerHTML = journals.map(j => `
-          <div class="card mb-3">
-            <div class="card-body">
-              <h5 class="card-title">${j.title}</h5>
-              <p class="card-text">${j.content.substring(0, 100)}...</p>
-              ${j.image_url ? `<img src="${API_BASE}${j.image_url}" class="img-fluid mb-2" style="max-height:200px;" alt="Journal Image">` : ''}
-              <p class="card-text"><small class="text-muted">${new Date(j.timestamp).toLocaleString()}</small></p>
-              <button class="btn btn-primary me-2" onclick="editJournal(${j.id}, '${j.title.replace(/'/g, "\\'")}', '${j.content.replace(/'/g, "\\'")}', '${j.image_url || ''}')">Edit</button>
-            </div>
-          </div>
-        `).join('');
-      });
+        });
     }
 
     // Edit journal
@@ -254,11 +254,11 @@
               'Authorization': `Bearer ${token}`
             }
           })
-          .then(response => response.json())
-          .then(journals => {
-            document.getElementById('journalCount').textContent = journals.length;
-            const list = document.getElementById('journalsList');
-            list.innerHTML = journals.map(j => `
+            .then(response => response.json())
+            .then(journals => {
+              document.getElementById('journalCount').textContent = journals.length;
+              const list = document.getElementById('journalsList');
+              list.innerHTML = journals.map(j => `
               <div class="card mb-3">
                 <div class="card-body">
                   <h5 class="card-title">${j.title}</h5>
@@ -269,13 +269,13 @@
                 </div>
               </div>
             `).join('');
-            // If new journal, auto-edit it
-            if (!editId) {
-              const lastJournal = journals[journals.length - 1];
-              editJournal(lastJournal.id, lastJournal.title, lastJournal.content, lastJournal.image_url);
-            }
-          })
-          .catch(error => console.error('Error refetching journals:', error));
+              // If new journal, auto-edit it
+              if (!editId) {
+                const lastJournal = journals[journals.length - 1];
+                editJournal(lastJournal.id, lastJournal.title, lastJournal.content, lastJournal.image_url);
+              }
+            })
+            .catch(error => console.error('Error refetching journals:', error));
         } else {
           alert('Failed to save journal.');
         }
